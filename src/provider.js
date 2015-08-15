@@ -76,6 +76,8 @@ angular.module('jm.i18next').provider('$i18next', function () {
 
 			t = null;
 
+      oldOptions = (oldOptions || globalOptions);
+
 			$i18nextTanslate.debugMsg.push(['i18next options changed:', oldOptions, newOptions]);
 
 			globalOptions = newOptions;
@@ -150,6 +152,8 @@ angular.module('jm.i18next').provider('$i18next', function () {
 		$i18nextTanslate.reInit = function () {
 			return optionsChange(globalOptions, globalOptions);
 		};
+
+		$i18nextTanslate.optionsChange = optionsChange;
 
 		$rootScope.$watch(function () { return $i18nextTanslate.options; }, function (newOptions, oldOptions) {
 			// Check whether there are new options and whether the new options are different from the old options.
