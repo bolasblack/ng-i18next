@@ -42,28 +42,36 @@ angular.module('jm.i18next').provider('$i18next', function () {
 
 				i18nDeferred = $q.defer();
 
-				i18n.init(options, function (err, localize) {
+				if (i18n.inited) {
+					$rootScope.$broadcast('i18nextLanguageChange', i18n.language || i18n.lng());
 
-					translations = {};
-
-					if (typeof(localize) === 'undefined') {
-						localize = err;
-						err = undefined;
-					} else if (!!err && typeof(err) !== 'undefined' && err !== null) {
-						console.log('[ng-i18next] i18next error: ' + err);
-					}
-
-					t = localize;
-
-					if (!$rootScope.$$phase) {
-						$rootScope.$digest();
-					}
-
-					$rootScope.$broadcast('i18nextLanguageChange', i18n.lng());
+					t = i18n.t;
 
 					i18nDeferred.resolve();
+				} else {
+					i18n.init(options, function (err, localize) {
 
-				});
+						translations = {};
+
+						if (typeof(localize) === 'undefined') {
+							localize = err;
+							err = undefined;
+						} else if (!!err && typeof(err) !== 'undefined' && err !== null) {
+							console.log('[ng-i18next] i18next error: ' + err);
+						}
+
+						t = localize;
+
+						if (!$rootScope.$$phase) {
+							$rootScope.$digest();
+						}
+
+						$rootScope.$broadcast('i18nextLanguageChange', i18n.language || i18n.lng());
+
+						i18nDeferred.resolve();
+
+					});
+				}
 
 				return i18nDeferred.promise;
 
